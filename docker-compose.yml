@@ -1,0 +1,25 @@
+services:
+  db_pix_notification:
+    image: postgres:15.3-alpine
+    container_name: db_pix_notification
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: notificationdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db_pix_notification_data:/var/lib/postgresql/data
+
+  mq_pix_notification:
+    image: rabbitmq:3.11-management-alpine
+    container_name: mq_pix_notification
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+volumes:
+  db_pix_notification_data:
