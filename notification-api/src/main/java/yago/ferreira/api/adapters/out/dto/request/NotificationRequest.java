@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class NotificationRequest {
-    private UsuarioRequest sender;
     private String message;
     private BigDecimal price;
 }

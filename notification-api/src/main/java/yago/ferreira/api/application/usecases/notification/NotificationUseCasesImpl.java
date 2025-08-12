@@ -5,6 +5,8 @@ import yago.ferreira.api.domain.model.NotificationModel;
 import yago.ferreira.api.domain.port.in.usecases.NotificationUseCases;
 import yago.ferreira.api.domain.port.out.repository.NotificationRepository;
 
+import java.time.LocalDateTime;
+
 @Component
 public class NotificationUseCasesImpl implements NotificationUseCases {
     private final NotificationRepository notificationRepository;
@@ -15,6 +17,7 @@ public class NotificationUseCasesImpl implements NotificationUseCases {
 
     @Override
     public NotificationModel executeSendNotification(NotificationModel notificationModel) {
+        notificationModel.setCreatedAt(LocalDateTime.now());
         return notificationRepository.executeSave(notificationModel);
     }
 }
