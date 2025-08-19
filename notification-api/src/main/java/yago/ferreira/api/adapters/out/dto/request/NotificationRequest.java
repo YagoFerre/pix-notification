@@ -10,4 +10,5 @@ import java.math.BigDecimal;
 public class NotificationRequest {
     private String message;
     private BigDecimal price;
+    private Long senderId;
 }

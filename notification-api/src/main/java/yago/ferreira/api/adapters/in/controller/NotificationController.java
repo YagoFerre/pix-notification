@@ -16,8 +16,8 @@ public class NotificationController {
     }
 
     @PostMapping
-    public ResponseEntity<NotificationResponse> sendNotification(@RequestBody NotificationRequest notificationRequest, @RequestParam Long senderId) {
-        NotificationResponse notificationSent = notificationService.sendNotification(notificationRequest, senderId);
+    public ResponseEntity<NotificationResponse> sendNotification(@RequestBody NotificationRequest notificationRequest) {
+        NotificationResponse notificationSent = notificationService.sendNotification(notificationRequest);
         return ResponseEntity.ok(notificationSent);
     }
 }

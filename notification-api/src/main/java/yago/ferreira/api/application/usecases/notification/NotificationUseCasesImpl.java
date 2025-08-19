@@ -17,7 +17,6 @@ public class NotificationUseCasesImpl implements NotificationUseCases {
 
     @Override
     public NotificationModel executeSendNotification(NotificationModel notificationModel) {
-        notificationModel.setCreatedAt(LocalDateTime.now());
         return notificationRepository.executeSave(notificationModel);
     }
 }

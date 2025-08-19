@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class NotificationResponse {
-    private UsuarioResponse user;
+    private UsuarioResponse sender;
     private String message;
     private BigDecimal price;
     private LocalDateTime createdAt;

@@ -20,11 +20,10 @@ public class NotificationService {
         this.usuarioUseCases = usuarioUseCases;
     }
 
-    public NotificationResponse sendNotification(NotificationRequest notificationRequest, Long senderId) {
-        UsuarioModel usuarioModel = usuarioUseCases.executeFindUser(senderId).orElseThrow(() -> new RecordNotFoundException(senderId));
+    public NotificationResponse sendNotification(NotificationRequest notificationRequest) {
+        UsuarioModel usuarioModel = usuarioUseCases.executeFindUser(notificationRequest.getSenderId()).orElseThrow(() -> new RecordNotFoundException(notificationRequest.getSenderId()));
+        NotificationModel notificationModel = NotificationMapper.INSTANCE.bindWithUserRequestToModel(notificationRequest, usuarioModel);
 
-        NotificationModel notificationModel = NotificationMapper.INSTANCE.requestToModel(notificationRequest);
-        notificationModel.setSender(usuarioModel);
         return NotificationMapper.INSTANCE.modelToResponse(notificationUseCases.executeSendNotification(notificationModel));
     }
 }
