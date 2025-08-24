@@ -2,6 +2,7 @@ package yago.ferreira.api.adapters.in.service;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import yago.ferreira.api.adapters.out.dto.request.NotificationRequest;
 import yago.ferreira.api.adapters.out.dto.response.NotificationResponse;
 import yago.ferreira.api.adapters.out.mapper.NotificationMapper;
@@ -24,6 +25,7 @@ public class NotificationService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
+    @Transactional
     public NotificationResponse sendNotification(NotificationRequest notificationRequest) {
         UsuarioModel usuarioModel = usuarioUseCases.executeFindUser(notificationRequest.getSenderId()).orElseThrow(() -> new RecordNotFoundException(notificationRequest.getSenderId()));
         NotificationModel notificationModel = NotificationMapper.INSTANCE.bindWithUserRequestToModel(notificationRequest, usuarioModel);
