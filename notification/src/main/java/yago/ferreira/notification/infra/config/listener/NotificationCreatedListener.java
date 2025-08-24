@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 public class NotificationCreatedListener {
     public static final String SENT_NOTIFICATION_QUEUE = "notification.v1.sent-notification";
 
-    @RabbitListener
+    @RabbitListener(queues = SENT_NOTIFICATION_QUEUE)
     public void onNotificationCreated() {}
 }
