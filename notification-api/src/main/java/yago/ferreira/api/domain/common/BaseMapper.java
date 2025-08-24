@@ -5,4 +5,5 @@ public interface BaseMapper<Entity, Model, Request, Response> {
     Model toDomainModel(Entity entity);
     Response modelToResponse(Model model);
     Model requestToModel(Request request);
+    Model responseToModel(Response response);
 }
