@@ -1,4 +1,4 @@
-package yago.ferreira.notification.infra.config.listener;
+package yago.ferreira.notification.adapters.out.listener;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
