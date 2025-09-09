@@ -13,7 +13,7 @@ public class EmitterUseCasesImpl implements SseEmitterUseCase {
     }
 
     @Override
-    public void publishNotification(Long userId, SseEmitterModel sseEmitterModel) {
-
+    public SseEmitterModel publishNotification(Long userId, SseEmitterModel sseEmitterModel) {
+        return null;
     }
 }

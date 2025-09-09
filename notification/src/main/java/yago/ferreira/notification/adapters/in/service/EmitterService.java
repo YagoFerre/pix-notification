@@ -15,4 +15,6 @@ public class EmitterService {
     public SseEmitter getEmitterClient(Long userId) {
         return sseEmitterUseCase.addEmitter(userId);
     };
+
+
 }

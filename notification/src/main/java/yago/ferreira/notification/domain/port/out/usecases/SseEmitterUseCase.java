@@ -9,5 +9,5 @@ import yago.ferreira.notification.domain.model.SseEmitterModel;
  */
 public interface SseEmitterUseCase {
     SseEmitter addEmitter(Long userId);
-    void publishNotification(Long userId, SseEmitterModel sseEmitterModel);
+    SseEmitterModel publishNotification(Long userId, SseEmitterModel sseEmitterModel);
 }
