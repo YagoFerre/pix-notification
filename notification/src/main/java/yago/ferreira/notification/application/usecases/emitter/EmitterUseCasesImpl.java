@@ -3,7 +3,7 @@ package yago.ferreira.notification.application.usecases.emitter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import yago.ferreira.notification.domain.model.SseEmitterModel;
-import yago.ferreira.notification.domain.port.out.usecases.SseEmitterUseCase;
+import yago.ferreira.notification.domain.port.in.usecases.SseEmitterUseCase;
 
 import java.io.IOException;
 import java.util.Map;

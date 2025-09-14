@@ -1,4 +1,4 @@
-package yago.ferreira.notification.domain.port.out.usecases;
+package yago.ferreira.notification.domain.port.in.usecases;
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import yago.ferreira.notification.domain.model.SseEmitterModel;

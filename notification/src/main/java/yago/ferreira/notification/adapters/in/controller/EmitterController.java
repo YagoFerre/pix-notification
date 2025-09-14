@@ -16,6 +16,6 @@ public class EmitterController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<SseEmitter> openServerSentEvents(@PathVariable Long userId) {
-        return ResponseEntity.ok(emitterService.getEmitterClient(userId));
+        return ResponseEntity.ok(emitterService.openEmitterClient(userId));
     }
 }

@@ -2,7 +2,8 @@ package yago.ferreira.notification.adapters.in.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import yago.ferreira.notification.domain.port.out.usecases.SseEmitterUseCase;
+import yago.ferreira.notification.domain.model.SseEmitterModel;
+import yago.ferreira.notification.domain.port.in.usecases.SseEmitterUseCase;
 
 @Service
 public class EmitterService {
@@ -12,9 +13,12 @@ public class EmitterService {
         this.sseEmitterUseCase = sseEmitterUseCase;
     }
 
-    public SseEmitter getEmitterClient(Long userId) {
+    public SseEmitter openEmitterClient(Long userId) {
         return sseEmitterUseCase.addEmitter(userId);
     };
 
+    public SseEmitterModel sendNotificationEmitter(Long userId) {
+        return null;
+    }
 
 }
