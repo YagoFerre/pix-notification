@@ -28,19 +28,15 @@ public class EmitterService implements SseEmitterHandler {
     }
 
     @Override
-    public SseEmitterResponse publishNotification(SseEmitterResponse sseEmitterResponse) throws IOException {
+    public void publishNotification(SseEmitterResponse sseEmitterResponse) throws IOException {
         SseEmitter emitter = emitters.get(sseEmitterResponse.getId());
 
         if (emitter != null) {
             try {
                 emitter.send(SseEmitter.event().data(sseEmitterResponse));
-
             } catch (IOException ioException) {
                 throw new IOException("Error ao publicar pix ao SSE " + ioException.getMessage());
             }
-
         }
-
-        return sseEmitterResponse;
     }
 }

@@ -8,5 +8,5 @@ import java.io.IOException;
  * Ao escutar a fila do RabbitMQ essa func retorna pro Sse a notificacao
  */
 public interface SseEmitterHandler {
-    SseEmitterResponse publishNotification(SseEmitterResponse emitterResponse) throws IOException;
+    void publishNotification(SseEmitterResponse emitterResponse) throws IOException;
 }

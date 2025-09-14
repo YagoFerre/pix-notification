@@ -20,10 +20,11 @@ public class NotificationCreatedListener {
 
     @RabbitListener(queues = SENT_NOTIFICATION_QUEUE)
     public void onNotificationCreated(NotificationResponse notificationRecived) throws IOException {
-        SseEmitterResponse emitterResponse = new SseEmitterResponse();
-        emitterResponse.setId(notificationRecived.getSender().getId());
-        emitterResponse.setData(notificationRecived);
-        emitterResponse.setEvent("pix-notification");
+        SseEmitterResponse emitterResponse = new SseEmitterResponse(
+                notificationRecived.getSender().getId(),
+                notificationRecived,
+                "pix-notification"
+        );
 
         emitterService.publishNotification(emitterResponse);
     }
