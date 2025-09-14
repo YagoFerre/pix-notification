@@ -5,9 +5,8 @@ import yago.ferreira.notification.adapters.out.dto.response.SseEmitterResponse;
 import java.io.IOException;
 
 /**
- * Um abre conexao, outro vai servir de axilio
- * para o RabbitMq ao escutar a fila
+ * Ao escutar a fila do RabbitMQ essa func retorna pro Sse a notificacao
  */
 public interface SseEmitterHandler {
-    SseEmitterResponse publishNotification(Long userId, SseEmitterResponse sseEmitterModel) throws IOException;
+    SseEmitterResponse publishNotification(SseEmitterResponse emitterResponse) throws IOException;
 }
