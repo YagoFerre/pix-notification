@@ -5,11 +5,10 @@
 ## ✨ Funcionalidades
 
 - 📱 Notificações em tempo real
-- 💳 Rastreamento de transações PIX
-- 👥 Gerenciamento de usuários
+- 💳 Rastreamento de notificações PIX
 - 🔄 Integração simplificada
 
-## 🏗️ Arquitetura
+## 🏗️ Arquitetura Ports and Adapters
 
 O projeto é dividido em dois módulos principais:
 
@@ -19,7 +18,7 @@ O projeto é dividido em dois módulos principais:
 - Publicação de eventos no RabbitMQ
 
 ### 📲 notification
-- Serviço de consumo de eventos
+- Serviço de consumo de eventos RabbitMQ
 - Entrega de notificações via Server-Sent Events (SSE)
 - Processamento em tempo real
 
