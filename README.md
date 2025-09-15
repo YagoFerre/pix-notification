@@ -1,48 +1,75 @@
-# pix-notification ⚡️
+# 🚀 PIX Notification System
 
-Um projeto multi-módulo em Java (Spring Boot) pra enviar notificações em tempo real via RabbitMQ + Server-Sent Events (SSE). Leve, simples e fácil de integrar.
+> Sistema de notificações em tempo real para transações PIX utilizando Spring Boot e RabbitMQ
 
-Principais módulos
-- `notification-api` — API REST: persiste notificações/usuários e publica eventos no RabbitMQ.
-- `notification` — Serviço consumidor: lê a fila e empurra notificações em tempo real via SSE para clientes conectados.
+## ✨ Funcionalidades
 
-O que ele faz
-- Criar usuários
-- Criar notificações associadas a usuários
-- Publicar eventos em uma fila RabbitMQ
-- Consumir a fila e entregar notificações em tempo real com SSE
+- 📱 Notificações em tempo real
+- 💳 Rastreamento de transações PIX
+- 👥 Gerenciamento de usuários
+- 🔄 Integração simplificada
 
-Arquitetura - Ports and Adapters Hexagonal
-- notification-api
-  - Spring Boot + JPA/Hibernate (Postgres)
-  - Publica eventos para RabbitMQ (JSON via Jackson)
-- notification
-  - Spring Boot que escuta a fila `notification.v1.sent-notification`
-  - Envia SSE para o usuário quando a mensagem chega
+## 🏗️ Arquitetura
 
-Dependências (recomendado via docker-compose)
-- PostgreSQL 15.3
-- RabbitMQ 3.11 (+ management em 15672)
+O projeto é dividido em dois módulos principais:
 
-Endpoints principais
+### 📬 notification-api
+- API REST para gestão de notificações e usuários
+- Integração com PostgreSQL
+- Publicação de eventos no RabbitMQ
 
-notification-api
-- POST /api/v1/usuario
-  - Cria usuário
-  - Body: UsuarioRequest
+### 📲 notification
+- Serviço de consumo de eventos
+- Entrega de notificações via Server-Sent Events (SSE)
+- Processamento em tempo real
 
-- POST /api/v1/notification
-  - Salva notificação e publica evento na fila
-  - Body: NotificationRequest
+## 🛠️ Tecnologias
 
-notification (SSE)
-- GET /api/v1/emitter/{userId}
-  - Abre conexão SSE para receber notificações do userId
-  - Retorna SseEmitter; quando chegar mensagem na fila, o serviço envia o evento
+- ☕ Java + Spring Boot
+- 🐘 PostgreSQL 15.3
+- 🐰 RabbitMQ 3.11
+- 📡 Server-Sent Events (SSE)
 
-Modelos (exemplos JSON)
+## 🚀 Como Usar
 
-NotificationRequest (POST /api/v1/notification)
+### 1. Iniciar as Dependências
+```bash
+docker-compose up -d
+```
+
+### 2. Criar um Usuário
+```bash
+curl -X POST http://localhost:8080/api/v1/usuario \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome": "Yago",
+    "email": "yago@example.com"
+  }'
+```
+
+### 3. Enviar uma Notificação
+```bash
+curl -X POST http://localhost:8080/api/v1/notification \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Você recebeu um Pix",
+    "price": 50.0,
+    "senderId": 1
+  }'
+```
+
+## 📡 Endpoints
+
+### API REST (notification-api)
+- `POST /api/v1/usuario` - Cadastro de usuários
+- `POST /api/v1/notification` - Envio de notificações
+
+### SSE (notification)
+- `GET /api/v1/emitter/{userId}` - Stream de notificações em tempo real
+
+## 🔍 Exemplos de Payload
+
+### Envio de Notificação
 ```json
 {
   "message": "Olá, você recebeu uma cobrança",
@@ -51,15 +78,7 @@ NotificationRequest (POST /api/v1/notification)
 }
 ```
 
-UsuarioRequest (POST /api/v1/usuario)
-```json
-{
-  "nome": "Yago Ferreira",
-  "email": "yago@example.com"
-}
-```
-
-NotificationResponse (ex.: retornado pela API / enviado na fila)
+### Resposta da Notificação
 ```json
 {
   "message": "Olá, você recebeu uma cobrança",
@@ -73,26 +92,10 @@ NotificationResponse (ex.: retornado pela API / enviado na fila)
 }
 ```
 
-SseEmitterResponse (payload SSE)
-```json
-{
-  "id": 123,
-  "data": { /* NotificationResponse */ },
-  "event": "notification.created"
-}
-```
+## 📝 Licença
 
-Exemplo de uso (fluxo)
-1) Criar usuário:
-```bash
-curl -X POST http://localhost:8080/api/v1/usuario \
-  -H "Content-Type: application/json" \
-  -d '{"nome":"Yago","email":"yago@example.com"}'
-```
+Este projeto está sob a licença MIT.
 
-3) Criar notificação (API)
-```bash
-curl -X POST http://localhost:8080/api/v1/notification \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Você recebeu um Pix","price":50.0,"senderId":1}'
-```
+---
+
+Feito por [Yago Ferreira](https://github.com/YagoFerre)
