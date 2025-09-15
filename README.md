@@ -1,117 +1,98 @@
-# notification (pix-notification)
+# pix-notification ⚡️
 
-Projeto multi-módulo em Java (Spring Boot) para envio e entrega de notificações em tempo real.
-É composto por dois módulos principais:
+Um projeto multi-módulo em Java (Spring Boot) pra enviar notificações em tempo real via RabbitMQ + Server-Sent Events (SSE). Leve, simples e fácil de integrar.
 
-- `notification-api` — API que persiste notificações e publica eventos (RabbitMQ).
-- `notification` — Serviço que consome a fila do RabbitMQ e entrega notificações via Server-Sent Events (SSE) para clientes conectados.
+Principais módulos
+- `notification-api` — API REST: persiste notificações/usuários e publica eventos no RabbitMQ.
+- `notification` — Serviço consumidor: lê a fila e empurra notificações em tempo real via SSE para clientes conectados.
 
-Este README descreve arquitetura, como executar localmente (com Docker Compose para dependências), endpoints, formatos de payload e exemplos de uso.
+O que ele faz
+- Criar usuários
+- Criar notificações associadas a usuários
+- Publicar eventos em uma fila RabbitMQ
+- Consumir a fila e entregar notificações em tempo real com SSE
 
-Descrição
-O sistema permite:
-- Criar usuários (API).
-- Criar notificações (API) associados a usuários.
-- Publicar eventos de notificação em uma fila RabbitMQ.
-- Serviço consumidor lê a fila e encaminha em tempo real via SSE para clientes abertos pelo usuário destinatário.
+Arquitetura - Ports and Adapters Hexagonal
+- notification-api
+  - Spring Boot + JPA/Hibernate (Postgres)
+  - Publica eventos para RabbitMQ (JSON via Jackson)
+- notification
+  - Spring Boot que escuta a fila `notification.v1.sent-notification`
+  - Envia SSE para o usuário quando a mensagem chega
 
-Arquitetura
-- notification-api (Spring Boot)
-  - Persistência via JPA/Hibernate (PostgreSQL).
-  - Publicação de evento para RabbitMQ (Jackson converter).
-- notification (Spring Boot)
-  - Escuta fila RabbitMQ (`notification.v1.sent-notification`).
-  - Mantém SseEmitter por usuário (mapa ConcurrentHashMap).
-  - Envia evento SSE ao usuário conectado.
-
-Dependências externas (rodar via docker-compose incluido)
+Dependências (recomendado via docker-compose)
 - PostgreSQL 15.3
-- RabbitMQ 3.11 (management plugin disponível em 15672)
+- RabbitMQ 3.11 (+ management em 15672)
 
+Endpoints principais
 
-
-Endpoints (resumo)
-
-notification-api (HTTP)
+notification-api
 - POST /api/v1/usuario
-  - Cria usuário.
-  - Request body: UsuarioRequest
+  - Cria usuário
+  - Body: UsuarioRequest
+
 - POST /api/v1/notification
-  - Salva notificação e publica evento para fila RabbitMQ.
-  - Request body: NotificationRequest
+  - Salva notificação e publica evento na fila
+  - Body: NotificationRequest
 
-notification (HTTP)
-- GET /api/v1/emitter/{userId
-}
-  - Abre conexão SSE para receber notificações destinadas ao userId.
-  - Retorna `SseEmitter` e envia eventos quando mensagens chegam pela fila.
+notification (SSE)
+- GET /api/v1/emitter/{userId}
+  - Abre conexão SSE para receber notificações do userId
+  - Retorna SseEmitter; quando chegar mensagem na fila, o serviço envia o evento
 
-Modelos (JSON)
-- NotificationRequest (enviado para /api/v1/notification)
+Modelos (exemplos JSON)
+
+NotificationRequest (POST /api/v1/notification)
 ```json
 {
-    "message": "Olá, você recebeu uma cobrança",
-    "price": 34.50,
-    "senderId": 1
+  "message": "Olá, você recebeu uma cobrança",
+  "price": 34.50,
+  "senderId": 1
 }
 ```
 
-- UsuarioRequest (enviado para /api/v1/usuario)
+UsuarioRequest (POST /api/v1/usuario)
 ```json
 {
+  "nome": "Yago Ferreira",
+  "email": "yago@example.com"
+}
+```
+
+NotificationResponse (ex.: retornado pela API / enviado na fila)
+```json
+{
+  "message": "Olá, você recebeu uma cobrança",
+  "price": 34.50,
+  "createdAt": "2025-09-15T12:34:56",
+  "sender": {
+    "id": 1,
     "nome": "Yago Ferreira",
-    "email": "yago@example.com"
+    "createdAt": "2025-09-15T12:30:00"
+  }
 }
 ```
 
-- NotificationResponse (ex.: retornado pela API e via fila)
+SseEmitterResponse (payload SSE)
 ```json
 {
-    "message": "Olá, você recebeu uma cobrança",
-    "price": 34.50,
-    "createdAt": "2025-09-15T12:34:56",
-    "sender": {
-        "id": 1,
-        "nome": "Yago Ferreira",
-        "createdAt": "2025-09-15T12:30:00"
-    }
+  "id": 123,
+  "data": { /* NotificationResponse */ },
+  "event": "notification.created"
 }
 ```
 
-- SseEmitterResponse (payload SSE enviado pelo serviço de notificação)
-```json
-{
-    "id": 123, // id da notificação
-    "data": { /* NotificationResponse */},
-    "event": "notification.created"
-}
-```
-
-Exemplo de uso (fluxo típico)
-
-1. Criar usuário
+Exemplo de uso (fluxo)
+1) Criar usuário:
 ```bash
-curl -X POST http: //localhost:8080/api/v1/usuario \
+curl -X POST http://localhost:8080/api/v1/usuario \
   -H "Content-Type: application/json" \
-  -d '{
-    "nome": "Yago",
-    "email": "yago@example.com"
-}'
+  -d '{"nome":"Yago","email":"yago@example.com"}'
 ```
-Resposta: UsuarioResponse com id.
 
-2. Abrir SSE no cliente (no browser / app) para receber notificações do userId = 1
-Exemplo JavaScript:
-```js
-const userId = 1;
-const es = new EventSource(`http: //localhost:8090/api/v1/emitter/${userId}`);
-es.onmessage = function(e) {
-  console.log("Evento SSE recebido:", e.data);
-};
-es.addEventListener("notification.created", function(e) {
-  console.log("Evento específico:", e.data);
-});
-es.onerror = function(err) {
-  console.error("SSE error", err);
-};
+3) Criar notificação (API)
+```bash
+curl -X POST http://localhost:8080/api/v1/notification \
+  -H "Content-Type: application/json" \
+  -d '{"message":"Você recebeu um Pix","price":50.0,"senderId":1}'
 ```
