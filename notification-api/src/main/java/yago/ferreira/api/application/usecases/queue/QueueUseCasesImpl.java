@@ -1,5 +1,6 @@
 package yago.ferreira.api.application.usecases.queue;
 
+import com.github.Alym62.sdk.configurations.AbacatePayConfiguration;
 import org.springframework.stereotype.Component;
 import yago.ferreira.api.domain.model.NotificationModel;
 import yago.ferreira.api.domain.port.in.usecases.QueueUseCases;
