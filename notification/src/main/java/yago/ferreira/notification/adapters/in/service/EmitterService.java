@@ -11,6 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class EmitterService implements SseEmitterHandler {
+    /*
+    * Container que armazena as conexoes abertas
+    */
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter openEmitterClient(Long userId) {

@@ -7,6 +7,7 @@ import yago.ferreira.notification.adapters.in.service.EmitterService;
 
 @RestController
 @RequestMapping("api/v1/emitter")
+@CrossOrigin(origins = "http://localhost:4200")
 public class EmitterController {
     private final EmitterService emitterService;
 
