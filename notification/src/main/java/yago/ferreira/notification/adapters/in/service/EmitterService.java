@@ -17,7 +17,7 @@ public class EmitterService implements SseEmitterHandler {
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter openEmitterClient(Long userId) {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitters.put(userId, emitter);
 
         emitter.onCompletion(() -> emitters.remove(userId));
