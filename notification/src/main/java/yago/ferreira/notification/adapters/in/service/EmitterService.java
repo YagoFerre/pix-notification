@@ -8,13 +8,16 @@ import yago.ferreira.notification.domain.port.out.SseEmitterHandler;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class EmitterService implements SseEmitterHandler {
     /*
-    * Container que armazena as conexoes abertas
-    */
-    private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
+     * Container que armazena as conexoes abertas
+     */
+    private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>(); // sessions: {"key": 2, "value: "emitter", "key": 34, "value: "emitter"}
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 
     public SseEmitter openEmitterClient(Long userId) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
@@ -31,15 +34,18 @@ public class EmitterService implements SseEmitterHandler {
     }
 
     @Override
-    public void publishNotification(SseEmitterResponse sseEmitterResponse) throws IOException {
+    public void publishNotification(SseEmitterResponse sseEmitterResponse) {
         SseEmitter emitter = emitters.get(sseEmitterResponse.getId());
 
         if (emitter != null) {
-            try {
-                emitter.send(SseEmitter.event().data(sseEmitterResponse));
-            } catch (IOException ioException) {
-                throw new IOException("Error ao publicar pix ao SSE " + ioException.getMessage());
-            }
+            executor.execute(() -> {
+                try {
+                    emitter.send(SseEmitter.event().data(sseEmitterResponse));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
         }
     }
 }
