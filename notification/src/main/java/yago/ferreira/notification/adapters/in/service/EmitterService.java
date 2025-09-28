@@ -38,6 +38,7 @@ public class EmitterService implements SseEmitterHandler {
         SseEmitter emitter = emitters.get(sseEmitterResponse.getId());
 
         if (emitter != null) {
+            // executa a tarefa de enviar uma notification em uma thread separada
             executor.execute(() -> {
                 try {
                     emitter.send(SseEmitter.event().data(sseEmitterResponse));
