@@ -17,7 +17,7 @@ public class NotificationCreatedListener {
     }
 
     @RabbitListener(queues = SENT_NOTIFICATION_QUEUE)
-    public void onNotificationCreated(NotificationResponse notificationRecived) throws InterruptedException {
+    public void onNotificationCreated(NotificationResponse notificationRecived) {
         SseEmitterResponse emitterResponse = new SseEmitterResponse(
                 notificationRecived.getSender().getId(),
                 notificationRecived,
