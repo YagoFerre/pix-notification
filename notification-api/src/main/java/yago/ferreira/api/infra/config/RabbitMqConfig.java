@@ -22,6 +22,7 @@ public class RabbitMqConfig {
         return new Queue(SENT_NOTIFICATION_QUEUE);
     }
 
+
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
         return new RabbitAdmin(connectionFactory);

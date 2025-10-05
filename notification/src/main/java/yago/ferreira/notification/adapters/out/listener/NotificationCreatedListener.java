@@ -23,8 +23,7 @@ public class NotificationCreatedListener {
                 notificationRecived,
                 "pix-notification"
         );
-
-
+        
         emitterService.publishNotification(emitterResponse);
     }
 }
