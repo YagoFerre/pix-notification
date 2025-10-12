@@ -17,13 +17,13 @@ public class NotificationCreatedListener {
     }
 
     @RabbitListener(queues = SENT_NOTIFICATION_QUEUE)
-    public void onNotificationCreated(NotificationResponse notificationRecived) {
+    public void onNotificationCreated(NotificationResponse notificationReceived) {
         SseEmitterResponse emitterResponse = new SseEmitterResponse(
-                notificationRecived.getSender().getId(),
-                notificationRecived,
+                notificationReceived.getSender().getId(),
+                notificationReceived,
                 "pix-notification"
         );
-        
+
         emitterService.publishNotification(emitterResponse);
     }
 }
