@@ -1,5 +1,8 @@
 package yago.ferreira.notification.adapters.in.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import yago.ferreira.notification.adapters.out.dto.response.SseEmitterResponse;
@@ -13,6 +16,7 @@ import java.util.concurrent.Executors;
 
 @Service
 public class EmitterService implements SseEmitterHandler {
+    private static final Logger log = LoggerFactory.getLogger(EmitterService.class);
     /*
      * Container que armazena as conexoes abertas
      */
@@ -49,4 +53,37 @@ public class EmitterService implements SseEmitterHandler {
 
         }
     }
+
+    /*
+     * Sends to user every 30 secs, and remove dead emitters
+     */
+    @Scheduled(fixedRate = 30000)
+    public void sendHeartbeat() {
+        if (emitters.isEmpty()) {
+            return;
+        }
+
+        log.info("Sending heartbeat to {} active connections", emitters.size());
+
+        emitters.forEach((userId, emitter) -> {
+            // separate thread for execute this task
+            executor.execute(() -> {
+                try {
+                    emitter.send(SseEmitter.event().comment("ping"));
+                    log.info("💓 Heartbeat sent to userId: {}", userId);
+                } catch (IOException e) {
+                    log.warn("Heartbeat failed for userId: {}, connection is dead", userId);
+                    emitters.remove(userId);
+                    log.info("Successfully to remove userId: {} dead connection", userId);
+                } catch (IllegalStateException e) {
+                    log.warn("Heartbeat failed for userId: {}, emitter in illegal state", userId);
+                    emitters.remove(userId);
+                    log.info("Successfully to remove userId: {}", userId);
+                }
+            });
+        });
+
+    }
+
+
 }
